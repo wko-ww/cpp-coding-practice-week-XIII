@@ -1,1 +1,347 @@
-等下再补上
+//zy9_1
+#include"pch.h"
+#include<iostream>
+using namespace std;
+int main(void)
+{
+	void swap(int *, int *, int*); //int*
+
+	//输出提示
+	cout << "input 3 integers >> ";
+
+	//输入数据
+	int a, b, c;
+	int *a1 = &a, *b1 = &b, *c1 = &c;
+	cin >> a >> b >> c;
+
+	//交换变量值
+	swap(a1, b1, c1);
+
+	//输出结果
+	cout << "最小值:" << *a1 //*a1
+		<< " 中间值:" << *b1
+		<< " 最大值:" << *c1
+		<< endl; 
+
+	return 0;
+}
+
+
+void swap(int *x, int *y)
+{
+	/*如果前面大于后面，位置交换*/
+	if (*x > *y)
+	{
+		int t = *x;
+		*x = *y;
+		*y = t;
+	}
+}
+
+void swap(int *a, int *b, int *c)
+{
+	/*前两个取最大，放中间→后两个取最大，放最后→前两个取最大，放中间*/
+	swap(a, b);
+	swap(b, c);
+	swap(a, b);
+}
+
+//zy9_2
+#include "pch.h"
+#include<iostream>
+#include<string.h>
+using namespace std;
+
+int main(void)
+{
+	void select_odd_index(char *, char *);
+
+	//输出提示
+	cout << "input a string >> ";
+	
+
+	//输入字符串
+	char str1[50], str2[50] = { '\0' }; // 1)str2字符串最后有一个'\0', 在这初始化，使未赋值的str2元素都是'\0'。或者还可在自定义函数中赋值完毕后在字符串后面加一个'\0'。
+										//这样的目的是使str2成为一个字符串而不是字符数组
+	cin.getline(str1, 50); //3)防止字符串含空格
+
+	//用函数处理
+	select_odd_index(str1, str2);
+
+	//输出结果
+	cout << "str2: " << str2;
+
+	return 0;
+}
+
+//str1中下标为奇数的元素放入str2
+void select_odd_index(char *str1, char *str2)
+{
+	str1++;
+	for (; *str1 != '\0' && *(str1 - 1) != '\0'; str1 += 2, str2++) //2)&&，否则一直循环，因为若是||只要有一个条件成立就继续
+		                                                            /*for这样写，是为了避免跳过'\0'，因为如果str2定义时未初始化，'\0'后是随机值
+																	 另外一种避免方法是*str1 != '\0'同时将str1初始化为'\0'，使str1有效字符后面全是'\0'*/
+		*str2 = *str1;
+}
+
+//zy9_2拓展
+#include "pch.h"
+#include<iostream>
+#include<string.h>
+using namespace std;
+
+int main(void)
+{
+	void select_odd_index(char *, char *, int);
+
+	//输出提示
+	cout << "input a string >> ";
+
+	//输入字符串
+	char str1[50] = { '\0' }, str2[50] = { '\0' }; //1)这里str1也要初始化为'\0'
+	cin.getline(str1, 50); 
+
+	// /提示用户输入下标要求并接收
+	cout << "input an integer indicating the index and those of its times you want to find >> ";
+	int num;
+	cin >> num;
+
+	//用函数处理
+	select_odd_index(str1, str2, num); // /增加一个num参数
+
+	//输出结果
+	cout << "str2: " << str2;
+
+	return 0;
+}
+
+//找出下标为n及n倍数的下标放入str2
+void select_odd_index(char *str1, char *str2, int num) // /增加一个num参数
+{
+	for (str1 += num; *str1 != '\0'; str1 += num, str2++) // /1) str1在主函数初始化为'\0'，这里用*str != '\0'，否则因num不一样'\0'可能存在的区间也不一样，判断条件也不一样
+		*str2 = *str1;
+}
+
+//zy9_3
+#include"pch.h"
+#include<iostream>
+#include<time.h>
+using namespace std;
+
+int main(void)
+{
+	// 1)随机数太难找
+	/*
+	srand(time(NULL));
+
+	int a[4][5];
+	int *a1 = a[0]; //a[0]
+	for (int count = 0; count < 20; count++)
+	{
+		*(a1 + count) = rand() % 10;
+		cout << *(a1 + count) << '\t';
+		if ((count + 1) % 5 == 0)
+			cout << endl;
+	}
+	*/
+
+	// 数值初始化并输出数组
+	int a[4][5] = { { 200, 233, 19, 37, 64 }, { 231, 1986, 10, 8201, 3 }, { 100, 233, 64, 87, 56 }, { 642, 2102, 9, 12, 970 } };
+	int *a1 = a[0]; // 2)a[0],表示二维数组的第一个元素的地址，相当于a[0] + 0, 
+	for (int count = 0; count < 20; count++)
+	{
+		cout << *(a1 + count) << '\t';
+		if ((count + 1) % 5 == 0)
+			cout << endl;
+	}
+
+	// 找鞍点。对数组每一个点，判断是否鞍点。若是，输出。
+	int r, c, num = 1;
+	int *rp = &r, *cp = &c; // 3)指针要赋值，不然无法引用，因为不知道指针指向哪里
+	for (r = 0; r < 4; r++)
+	{
+		for (c = 0; c < 5; c++) // 4)访问权限冲突可能是因变量在某个作用域内外都被定义导致的，冲突会导致运行终止
+		{
+			bool find(int(*)[5], int *, int *);
+			if (find(a, rp, cp) == true)
+				cout << "saddle point " << num++ << " is "
+				<< a[*rp][*cp] << ", " << "the index of the row and colum is "
+				<< *rp << " " << *cp << endl; // 5)*rp *cp 否则输出地址
+		}
+	}
+
+	return 0;
+}
+
+//判断是否鞍点的函数。
+bool find(int(*a)[5], int *r, int *c)
+{
+	/*
+	先看此元素是否行最大。若不是，返回false。
+	若是，看此元素是否列最小。若是，返回true。若不是，返回false。*/
+
+	/*
+	6)不是在一行的一个元素不小于a[*r][rc]后就执行第二个for，是第一个for执行完，全都符合才不return false，进行下一步
+	否则如果这个元素在第一次循环符合，在后面的循环又符合，就会输出，但此元素不一定是本行最大，即不一定是鞍点
+	for (int rc = 0; rc < 5; rc++)
+		if (a[*r][*c] < a[*r][rc])
+			return false;
+		for (int cr = 0; cr < 4; cr++
+			if (a[*r][*c] > a[cr][*c])
+				return false;
+	return true;
+	*/
+	// 7)删除{ 记得 }也删，否则有不配对的提示
+
+	for (int rc = 0; rc < 5; rc++)
+		if (a[*r][*c] < a[*r][rc]) //*r
+			return false;
+	for (int cr = 0; cr < 4; cr++)
+		if (a[*r][*c] > a[cr][*c])
+			return false;
+	return true;
+}
+
+//zy9_3_拓展
+#include"pch.h"
+#include<iostream>
+#include<time.h>
+using namespace std;
+int main(void)
+{
+	srand(time(NULL));
+
+	//创建一个4*5的二维数组
+	int saddle_point[4][5];
+
+	//确定鞍点位置和大小
+	cout << "input the location of the saddle point in the form of (row number, colum number) such as (1, 2) >> ";
+	int row, colum;
+	cin.ignore();
+	cin >> row;
+	cin.ignore();
+	cin >> colum;
+	cin.ignore();
+	cout << "input the value of the saddle point >> ";
+	int value;
+	cin >> value;
+	saddle_point[row][colum] = value; //数组下标可以是变量
+
+	//输入随机数数值范围，鞍点值需小于范围最大值
+	int min, max;
+	cout << "input the range of numbers in the form of (min, max) such as (100, 300) >> ";
+	cin.ignore(2); //8)无视回车和(
+	cin >> min;
+	cin.ignore();
+	int count = 0; //7)外面赋值，否则每次重新赋值
+	while (true)
+	{
+		cin >> max;
+		if (count == 0) //6)只有第一次输入才有)，否则异常
+			cin.ignore();
+		if (value <= max)
+			break;
+		else
+		{
+			cout << "the value of the saddle point must be smaller than the max! input max again! >> max = ";
+			count++;
+		}
+	}
+
+	//产生数组，鞍点所在列所有数大于等于鞍点，鞍点所在行所有数小于等于鞍点
+	for (int r = 0; r < 4; r++)
+	{
+		for (int c = 0; c < 5; c++)
+		{
+			if (r == row && c == colum) //2）鞍点不用赋值， 否则重新赋值
+			{
+				cout << value << '\t'; //3)输出鞍点！ 输出value不是saddle_point[row][colum]，后者值随机 4)不用break，否则退出内层循环，鞍点后元素无法获值 5)加'\t'否则鞍点和后面的数连在一起
+				
+			}
+
+			if (r != row && c != colum)
+			{
+				saddle_point[r][c] = rand() % (max - min) + min; //9)要是产生随机数的表达式在这之前赋值给一个变量，这里和下面的表达式都改用这个变量表示，产生的随机数是一样的
+				cout << saddle_point[r][c] << '\t';
+			}
+				
+			if (r == row && c != colum) //2)c != colum鞍点不用赋值
+			{
+				while (true)
+				{
+					saddle_point[r][c] = rand() % (max - min) + min;
+					if (saddle_point[r][c] <= value)
+					{
+						cout << saddle_point[r][c] << '\t';
+						break;
+					}
+				}
+			}
+
+			if (c == colum && r != row) //2）r != row鞍点不用赋值
+			{
+				while (true)
+				{
+					saddle_point[r][c] = rand() % (max - min) + min;
+					if (saddle_point[r][c] >= value)
+					{
+						cout << saddle_point[r][c] << '\t';
+						break;
+					}
+				}
+			}
+		}
+		cout << endl; // 1)在内层for外面
+	}
+}
+
+//zy9_选做
+#include"pch.h"
+#include<iostream>
+#include<string.h>
+using namespace std;
+
+int main(void)
+{
+	//输出提示信息并接收字符串
+	cout << "input a string >> "; // 要是加\n会怎样？——cin.getline()不会接收
+	char main_str[500], sub_str[500]; 
+	cin.getline(main_str, 500);
+
+	//调用函数寻找最长单词
+	void select_max(char *, char *);
+	select_max(main_str, sub_str);
+
+	//输出结果
+	cout << "\nthe longest substring is " << sub_str << endl;
+
+	return 0;
+}
+
+void select_max(char *main_str, char *sub_str)
+{
+	/*
+	从第一个字符开始找非空格字符，找到后开始计数，直到再遇到空格或'\0'。若这个单词比原先最长的单词长，这个为最长单词。否则不操作。
+	然后从这个单词后面第一个非空格字符开始重新计数。以此反复，直到字符串结束。*/
+	int len_max = 0, i; 
+	char *p = main_str;
+	for (i = 0; i < strlen(main_str); i++)
+	{
+		if (*(main_str + i) != ' ')
+		{
+			int j;
+			for (j = i; *(main_str + j) != ' ' && *(main_str + j) != '\0'; j++) // 2)*(main_str + j) != ' '而不是j != ' '， j是数字，不等于空格，会一直循环 1)第二个条件有个且语句。单词后面不一定是空格，还可能是’\0’。若是或，无限循环 6） 因为j++之后才判断第二个条件是否成立，而此时如果最后一个字符处理完并j++后main_str[j]就是'\0',所以main_str不用初始化。
+				;
+			j--;// 3)j在for外面被引用，因此j在for外定义
+			if (len_max < j - i + 1) // j-i+1
+			{
+				len_max = j - i + 1; // 4) len+max = j-i+1而不是j，因为可能是中间的一段长度
+				p = main_str + i;
+			}
+			i = j + 1; //i-changing put here来跳过单词
+		}
+	}
+	for (int k = 0; k < len_max; p++, k++) //因此i在外部定义 5)i1而不是i，因为找到最长单词后i会继续自加直到循环结束，否则会输出最长单词及其后内容 7）p < main_str + i + len_max改成len_max,p是地址，其值不能直接和一般数值比较，否则for运行出错
+		sub_str[k] = *p;
+	sub_str[len_max] = '\0'; //8)表示sub_str是字符串。此外还可在定义sub_str时将其初始化为'\0'
+}
